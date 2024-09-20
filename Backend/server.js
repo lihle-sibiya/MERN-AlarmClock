@@ -9,10 +9,8 @@ const PORT = process.env.PORT || 5000;
 app.use(cors());
 app.use(bodyParser.json());
 
-mongoose.connect('mongodb://localhost:27017/alarmClock', {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-});
+mongoose.connect('mongodb://127.0.0.1:27017/alarmClock');
+
 
 const alarmSchema = new mongoose.Schema({
     time: String,
@@ -30,6 +28,11 @@ app.post('/api/alarms', async (req, res) => {
     const alarm = new Alarm(req.body);
     await alarm.save();
     res.status(201).send(alarm);
+});
+
+app.delete('/api/alarms/:id', async (req, res) => {
+    await Alarm.findByIdAndDelete(req.params.id);
+    res.status(204).send();
 });
 
 app.listen(PORT, () => {
